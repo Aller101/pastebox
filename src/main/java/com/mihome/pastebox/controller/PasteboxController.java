@@ -5,8 +5,11 @@
 package com.mihome.pastebox.controller;
 
 import com.mihome.pastebox.api.request.PasteboxRequest;
-import java.util.Collections;
-import java.util.List;
+import com.mihome.pastebox.api.response.PasteboxResponse;
+import com.mihome.pastebox.api.response.PasteboxUrlResponse;
+import com.mihome.pastebox.service.PasteboxService;
+import java.util.Collection;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,21 +21,24 @@ import org.springframework.web.bind.annotation.RestController;
  * @author alekseynesterov
  */
 @RestController
+@RequiredArgsConstructor
 public class PasteboxController {
     
+    private final PasteboxService pasteboxService;
+    
     @GetMapping("/{hash}")
-    public String getByHash(@PathVariable String hash){
-        return hash;
+    public PasteboxResponse getByHash(@PathVariable String hash){
+        return pasteboxService.getByHash(hash);
     }
     
     @GetMapping("/")
-    public List<String> getPublicPastelist(){
-        return Collections.EMPTY_LIST;
+    public Collection<PasteboxResponse> getPublicPastelist(){
+        return pasteboxService.getFirstPublicPasteboxes();
     }
     
     @PostMapping("/")
-    public String add(@RequestBody PasteboxRequest request){
-        return request.getData();
+    public PasteboxUrlResponse add(@RequestBody PasteboxRequest request){
+        return pasteboxService.create(request);
     } 
     
      
